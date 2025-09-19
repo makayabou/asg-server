@@ -77,12 +77,7 @@ func (m *Message) GetTextContent() (*TextMessageContent, error) {
 
 	err := json.Unmarshal([]byte(m.Content), &content)
 	if err != nil {
-		log.Printf("[WARN] Invalid text content in message ID %d (ExtID=%s): %q (err=%v)", 
-			m.ID, m.ExtID, m.Content, err)
-		return &TextMessageContent{
-			Text: fmt.Sprintf("[invalid content: %s]", m.Content),
-		}, nil
-		//return nil, fmt.Errorf("failed to unmarshal text content: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal text content: %w", err)
 	}
 
 	return &content, nil
