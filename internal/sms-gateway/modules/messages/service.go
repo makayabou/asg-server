@@ -315,17 +315,17 @@ func (s *Service) recipientsStateToModel(input []smsgateway.RecipientState, hash
 }
 
 func modelToMessageState(input Message) MessageStateOut {
-	return MessageStateOut{
-		DeviceID:    input.DeviceID,
-		IsHashed:    input.IsHashed,
-		IsEncrypted: input.IsEncrypted,
 
-		states := make(map[string]time.Time)
+	states := make(map[string]time.Time)
 		for _, s := range input.States {
 			if !s.UpdatedAt.IsZero() {
 				states[string(s.State)] = s.UpdatedAt
 			}
 		}
+	return MessageStateOut{
+		DeviceID:    input.DeviceID,
+		IsHashed:    input.IsHashed,
+		IsEncrypted: input.IsEncrypted,
 
 		MessageStateIn: MessageStateIn{
 			ID:         input.ExtID,
