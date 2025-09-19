@@ -162,7 +162,12 @@ func (s *Service) GetState(user models.User, ID string) (MessageStateOut, error)
 func (s *Service) GetMessage(user models.User, ID string) (MessageOut, error) {
 	message, err := s.messages.Get(
 		MessagesSelectFilter{ExtID: ID, UserID: user.ID},
-		MessagesSelectOptions{WithRecipients: true, WithDevice: true, WithStates: true},
+		MessagesSelectOptions{
+			WithRecipients: true,
+			WithDevice:     true,
+			WithStates:     true,
+			WithContent:    true,
+		},
 	)
 	if err != nil {
 		if errors.Is(err, ErrMessageNotFound) {
