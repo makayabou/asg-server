@@ -26,6 +26,7 @@ type MessagesSelectOptions struct {
 	WithRecipients bool
 	WithDevice     bool
 	WithStates     bool
+	WithContent    bool
 
 	// OrderBy sets the retrieval order for pending messages.
 	// Empty (zero) value defaults to "lifo".
