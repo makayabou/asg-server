@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"log"
-
 	"github.com/android-sms-gateway/server/internal/sms-gateway/models"
 	"gorm.io/gorm"
 )
