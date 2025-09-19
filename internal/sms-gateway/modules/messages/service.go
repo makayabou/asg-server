@@ -320,15 +320,23 @@ func modelToMessageState(input Message) MessageStateOut {
 		IsHashed:    input.IsHashed,
 		IsEncrypted: input.IsEncrypted,
 
+		states := make(map[string]time.Time)
+		for _, s := range input.States {
+			if !s.UpdatedAt.IsZero() {
+				states[string(s.State)] = s.UpdatedAt
+			}
+		}
+
 		MessageStateIn: MessageStateIn{
 			ID:         input.ExtID,
 			State:      input.State,
 			Recipients: slices.Map(input.Recipients, modelToRecipientState),
-			States: slices.Associate(
-				input.States,
-				func(state MessageState) string { return string(state.State) },
-				func(state MessageState) time.Time { return state.UpdatedAt },
-			),
+			States: states,
+			//States: slices.Associate(
+			//	input.States,
+			//	func(state MessageState) string { return string(state.State) },
+			//	func(state MessageState) time.Time { return state.UpdatedAt },
+			//),
 		},
 	}
 }
