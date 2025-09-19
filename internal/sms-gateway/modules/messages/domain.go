@@ -26,6 +26,7 @@ type MessageOut struct {
 	MessageIn
 
 	CreatedAt time.Time
+	State     *MessageStateOut `json:"state,omitempty"`
 }
 
 type MessageStateIn struct {

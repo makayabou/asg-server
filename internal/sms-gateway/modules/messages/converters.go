@@ -42,7 +42,7 @@ func messageToDomain(input Message) (MessageOut, error) {
 		},
 		CreatedAt: input.CreatedAt,
 	}
-	if len(input.States) > 0 || input.Device != nil {
+	if len(input.States) > 0 || input.DeviceID != nil {
         state := modelToMessageState(input)
         out.State = &state
     }
