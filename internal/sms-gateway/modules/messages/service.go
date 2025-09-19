@@ -159,6 +159,21 @@ func (s *Service) GetState(user models.User, ID string) (MessageStateOut, error)
 	return modelToMessageState(message), nil
 }
 
+func (s *Service) GetMessage(user models.User, ID string) (MessageOut, error) {
+	message, err := s.messages.Get(
+		MessagesSelectFilter{ExtID: ID, UserID: user.ID},
+		MessagesSelectOptions{WithRecipients: true, WithDevice: true, WithStates: true},
+	)
+	if err != nil {
+		if errors.Is(err, ErrMessageNotFound) {
+			return MessageOut{}, ErrMessageNotFound
+		}
+		return MessageOut{}, err
+	}
+
+	return messageToDomain(message)
+}
+
 func (s *Service) Enqueue(device models.Device, message MessageIn, opts EnqueueOptions) (MessageStateOut, error) {
 	state := MessageStateOut{
 		DeviceID: device.ID,

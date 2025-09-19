@@ -207,8 +207,8 @@ func (h *ThirdPartyController) list(user models.User, c *fiber.Ctx) error {
 	)
 }
 
-//	@Summary		Get message state
-//	@Description	Returns message state by ID
+//	@Summary		Get message state and text
+//	@Description	Returns message state and text by ID
 //	@Security		ApiAuth
 //	@Tags			User, Messages
 //	@Produce		json
@@ -223,7 +223,7 @@ func (h *ThirdPartyController) list(user models.User, c *fiber.Ctx) error {
 func (h *ThirdPartyController) get(user models.User, c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	state, err := h.messagesSvc.GetState(user, id)
+	msg, err := h.messagesSvc.GetMessage(user, id)
 	if err != nil {
 		if errors.Is(err, messages.ErrMessageNotFound) {
 			return fiber.NewError(fiber.StatusNotFound, err.Error())
@@ -232,7 +232,7 @@ func (h *ThirdPartyController) get(user models.User, c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(converters.MessageStateToDTO(state))
+	return c.JSON(converters.MessageToMobileDTO(msg))
 }
 
 //	@Summary		Request inbox messages export

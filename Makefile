@@ -1,5 +1,5 @@
 project_name = sms-gateway
-image_name = capcom6/$(project_name):latest
+image_name = gn/$(project_name):latest
 
 extension=
 ifeq ($(OS),Windows_NT)
