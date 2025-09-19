@@ -25,7 +25,7 @@ func messageToDomain(input Message) (MessageOut, error) {
 		return MessageOut{}, fmt.Errorf("can't get data content: %w", err)
 	}
 
-	return MessageOut{
+	out := MessageOut{
 		MessageIn: MessageIn{
 			ID: input.ExtID,
 
@@ -41,7 +41,12 @@ func messageToDomain(input Message) (MessageOut, error) {
 			Priority:           smsgateway.MessagePriority(input.Priority),
 		},
 		CreatedAt: input.CreatedAt,
-	}, nil
+	}
+	if len(input.States) > 0 || input.Device != nil {
+        state := modelToMessageState(input)
+        out.State = &state
+    }
+	return out, nil
 }
 
 func recipientToDomain(input MessageRecipient) string {
