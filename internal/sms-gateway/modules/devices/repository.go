@@ -68,11 +68,23 @@ func (r *repository) Insert(device *models.Device) error {
 }
 
 func (r *repository) UpdatePushToken(id, token string) error {
-	return r.db.Model(&models.Device{}).Where("id", id).Update("push_token", token).Error
+	return r.db.Model(&models.Device{}).Where("id = ?", id).Update("push_token", token).Error
 }
 
-func (r *repository) UpdateLastSeen(id string) error {
-	return r.db.Model(&models.Device{}).Where("id", id).Update("last_seen", time.Now()).Error
+func (r *repository) SetLastSeen(ctx context.Context, id string, lastSeen time.Time) error {
+	if lastSeen.IsZero() {
+		return nil // ignore zero timestamps
+	}
+	res := r.db.WithContext(ctx).
+		Model(&models.Device{}).
+		Where("id = ? AND last_seen < ?", id, lastSeen).
+		UpdateColumn("last_seen", lastSeen)
+	if res.Error != nil {
+		return res.Error
+	}
+
+	// RowsAffected==0 => not found or stale timestamp; treat as no-op.
+	return nil
 }
 
 func (r *repository) Remove(filter ...SelectFilter) error {
@@ -87,7 +99,7 @@ func (r *repository) Remove(filter ...SelectFilter) error {
 func (r *repository) removeUnused(ctx context.Context, since time.Time) (int64, error) {
 	res := r.db.
 		WithContext(ctx).
-		Where("updated_at < ?", since).
+		Where("last_seen < ?", since).
 		Delete(&models.Device{})
 
 	return res.RowsAffected, res.Error
